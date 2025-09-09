@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Frost Notes - The Digital Winter</title>
+    <style>
+        /* FONT IMPORTS */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        /* FROZEN THEME VARIABLES */
+        :root {
+            --bg: #0a1929;
+            --bg-gradient: linear-gradient(135deg, #0a1929 0%, #1a2f4a 30%, #0d2137 60%, #0a1929 100%);
+            --panel: rgba(10, 25, 41, 0.9);
+            --panel-strong: rgba(20, 40, 60, 0.95);
+            --glass: rgba(173, 216, 230, 0.05);
+            --text: #a3d5ff;
+            --text-secondary: #8ac4ff;
+            --text-dim: #6bb6ff;
+            --muted: #4a9eff;
+            --accent-1: #a3d5ff;
+            --accent-2: #e0f7fa;
+            --accent-gradient: linear-gradient(135deg, #a3d5ff 0%, #e0f7fa 50%, #8ac4ff 100%);
+            --danger: #ff5252;
+            --warning: #ffd740;
+            --border: rgba(163, 213, 255, 0.3);
+            --border-hover: rgba(163, 213, 255, 0.8);
+            --shadow: 0 0 20px rgba(163, 213, 255, 0.3);
+            --shadow-strong: 0 0 40px rgba(163, 213, 255, 0.5);
+            --backdrop: blur(10px) saturate(150%);
+            --glow: 0 0 20px rgba(163, 213, 255, 0.6);
+            --frost-rain: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="10" y="20" fill="%23a3d5ff" font-family="monospace" font-size="8" opacity="0.3">❄</text><text x="30" y="40" fill="%23a3d5ff" font-family="monospace" font-size="8" opacity="0.2">❅</text><text x="50" y="60" fill="%23a3d5ff" font-family="monospace" font-size="8" opacity="0.1">❆</text></svg>');
+        }
+        [data-theme="light"] {
+            --bg: #e6f7ff;
+            --bg-gradient: linear-gradient(135deg, #e6f7ff 0%, #cceeff 30%, #b3e0ff 60%, #e6f7ff 100%);
+            --panel: rgba(255, 255, 255, 0.9);
+            --panel-strong: rgba(250, 255, 255, 0.95);
+            --glass: rgba(173, 216, 230, 0.1);
+            --text: #0a4f7c;
+            --text-secondary: #0a5f8c;
+            --text-dim: #0a6f9c;
+            --muted: #0a7fac;
+            --accent-1: #4da6ff;
+            --accent-2: #66b3ff;
+            --accent-gradient: linear-gradient(135deg, #4da6ff 0%, #66b3ff 50%, #3399ff 100%);
+            --danger: #cc0000;
+            --warning: #cc9900;
+            --border: rgba(77, 166, 255, 0.3);
+            --border-hover: rgba(77, 166, 255, 0.6);
+            --shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            --shadow-strong: 0 10px 40px rgba(0, 0, 0, 0.2);
+            --backdrop: blur(10px) saturate(150%);
+            --glow: 0 0 15px rgba(77, 166, 255, 0.4);
+        }
+        
+        /* BASE STYLES */
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        html { 
+            scroll-behavior: smooth; 
+        }
+        
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+            transition: all 0.5s ease;
+            overflow-x: hidden;
+            position: relative;
+            font-size: 16px;
+        }
+        /* FROST EFFECT */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--frost-rain);
+            opacity: 0.1;
+            animation: frostFall 20s linear infinite;
+            z-index: -2;
+            pointer-events: none;
+        }
+        @keyframes frostFall {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+        /* ANIMATED FROST BACKGROUND */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(163, 213, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(224, 247, 250, 0.1) 0%, transparent 50%);
+            animation: frostPulse 4s ease-in-out infinite alternate;
+            z-index: -1;
+            pointer-events: none;
+        }
+        @keyframes frostPulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.6; }
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 32px;
+            position: relative;
+        }
+        .main-layout {
+            display: grid;
+            grid-template-columns: 500px 1fr;
+            gap: 32px;
+            margin-top: 32px;
+        }
+        /* FROST STYLE HEADERS */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .app-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            font-weight: 900;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: var(--glow);
+            animation: frostFlicker 2s ease-in-out infinite;
+            position: relative;
+            letter-spacing: 2px;
+        }
+        @keyframes frostFlicker {
+            0%, 100% { filter: brightness(1); text-shadow: var(--glow); }
+            50% { filter: brightness(1.3); text-shadow: 0 0 30px rgba(163, 213, 255, 0.8); }
+        }
+        .app-title::before {
+            content: '< ';
+            color: var(--accent-1);
+            animation: blink 1.5s infinite;
+        }
+        .app-title::after {
+            content: ' />';
+            color: var(--accent-1);
+            animation: blink 1.5s infinite reverse;
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.5; }
+        }
+        /* USER INFO */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-family: 'Space Mono', monospace;
+        }
+        .user-email {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            background: var(--glass);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+        /* AUTH CONTAINER */
+        .auth-container {
+            max-width: 500px;
+            margin: 80px auto;
+            background: var(--panel);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: var(--shadow-strong);
+            backdrop-filter: var(--backdrop);
+            position: relative;
+            overflow: hidden;
+        }
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--accent-gradient);
+            border-radius: 20px;
+            z-index: -1;
+            animation: frostGlow 3s ease-in-out infinite alternate;
+        }
+        @keyframes frostGlow {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            background: var(--glass);
+        }
+        .auth-tabs .btn {
+            flex: 1;
+            border-radius: 0;
+            font-family: 'Orbitron', monospace;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        #authError {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: 16px;
+            text-align: center;
+            font-family: 'Space Mono', monospace;
+            background: rgba(255, 82, 82, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--danger);
+        }
+        /* PANELS */
+        .panel {
+            background: var(--panel);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: var(--shadow);
+            backdrop-filter: var(--backdrop);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-gradient);
+            transition: left 0.8s ease;
+        }
+        .panel:hover::before {
+            left: 100%;
+        }
+        .panel:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-strong);
+            border-color: var(--border-hover);
+        }
+        .panel h2 {
+            font-family: 'Orbitron', monospace;
+            margin-bottom: 30px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        /* NOTES GRID */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 30px;
+        }
+        .note-card {
+            background: var(--panel);
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .note-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-gradient);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        .note-card:hover::before {
+            transform: scaleX(1);
+        }
+        .note-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-strong);
+        }
+        .note-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            font-size: 1.3rem;
+            color: var(--text);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .note-content {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-family: 'Space Mono', monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+            flex-grow: 1;
+            line-height: 1.6;
+            background: var(--glass);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .note-footer {
+            border-top: 1px solid var(--border);
+            padding-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .note-date {
+            font-size: 0.8rem;
+            color: var(--muted);
+            font-family: 'Space Mono', monospace;
+        }
+        .note-actions {
+            display: flex;
+            gap: 8px;
+        }
+        /* MEDIA ATTACHMENTS */
+        .media-attachments {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .media-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+            border: 2px solid var(--border);
+        }
+        .media-item:hover {
+            transform: scale(1.05);
+            border-color: var(--border-hover);
+        }
+        .media-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            display: block;
+        }
+        .media-remove {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .media-remove:hover {
+            transform: scale(1.1);
+            background: #ff2055;
+        }
+        /* DRAWING CANVAS */
+        .drawing-canvas {
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            background: #ffffff;
+            cursor: crosshair;
+            margin: 15px 0;
+            box-shadow: var(--shadow);
+        }
+        .canvas-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            background: var(--glass);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        .color-picker {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .color-picker:hover {
+            transform: scale(1.1);
+            border-color: var(--border-hover);
+        }
+        /* FORMS & INPUTS */
+        .form-row {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        input, textarea {
+            width: 100%;
+            background: var(--panel);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 15px 20px;
+            border-radius: 10px;
+            outline: none;
+            font-size: 1rem;
+            font-family: 'Space Mono', monospace;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        input:focus, textarea:focus {
+            border-color: var(--accent-1);
+            box-shadow: 0 0 0 4px rgba(163, 213, 255, 0.2);
+            background: var(--glass);
+        }
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+        /* BUTTONS */
+        .btn {
+            cursor: pointer;
+            border: 2px solid var(--border);
+            padding: 12px 24px;
+            border-radius: 10px;
+            background: var(--panel);
+            color: var(--text);
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--accent-gradient);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+        .btn:hover::before {
+            left: 0;
+        }
+        .btn:hover {
+            color: #0a1929;
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        .btn.primary {
+            background: var(--accent-gradient);
+            color: #0a1929;
+            border-color: var(--accent-1);
+            font-weight: 700;
+        }
+        .btn.primary:hover {
+            filter: brightness(1.2);
+            transform: translateY(-3px) scale(1.02);
+        }
+        .btn.danger {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+        .btn.danger::before {
+            background: var(--danger);
+        }
+        .btn.danger:hover {
+            color: white;
+        }
+        .button-group {
+            display: flex;
+            gap: 15px;
+        }
+        .button-group .btn {
+            flex: 1;
+        }
+        /* TAGS */
+        .tags-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: var(--panel);
+            border: 2px solid var(--border);
+            padding: 12px;
+            border-radius: 10px;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .tags-input:focus-within {
+            border-color: var(--accent-1);
+            box-shadow: 0 0 0 4px rgba(163, 213, 255, 0.2);
+        }
+        .tags-input input {
+            border: none;
+            background: transparent;
+            padding: 8px;
+            flex: 1;
+            min-width: 150px;
+        }
+        .tag-chip {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: var(--accent-gradient);
+            color: #0a1929;
+            font-size: 0.9rem;
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            font-weight: 600;
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+        .tag-chip:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+        .tag-chip .remove-tag {
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+        }
+        .tag-chip .remove-tag:hover {
+            transform: scale(1.3);
+        }
+        .note-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        /* FILTERS */
+        .filters {
+            margin-top: 32px;
+        }
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .tag-cloud-btn {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-family: 'Orbitron', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .tag-cloud-btn:hover {
+            border-color: var(--border-hover);
+            color: var(--text);
+            transform: translateY(-2px);
+        }
+        .tag-cloud-btn.active {
+            background: var(--accent-gradient);
+            color: #0a1929;
+            border-color: var(--accent-1);
+            font-weight: 600;
+        }
+        /* THEME TOGGLE */
+        .theme-toggle {
+            position: fixed;
+            top: 32px;
+            right: 32px;
+            z-index: 1001;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            background: var(--accent-gradient);
+            border: 2px solid var(--border-hover);
+            color: #0a1929;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .theme-toggle:hover {
+            transform: rotate(180deg) scale(1.1);
+            box-shadow: var(--shadow-strong);
+        }
+        /* AUDIO CONTROLS */
+        .audio-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin: 15px 0;
+            background: var(--glass);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        .audio-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--panel);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            width: 100%;
+        }
+        /* REMINDER STYLES */
+        .reminder-section {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .reminder-active {
+            background: linear-gradient(45deg, rgba(163, 213, 255, 0.1), rgba(224, 247, 250, 0.1));
+            border-color: var(--accent-1);
+            animation: reminderGlow 2s ease-in-out infinite;
+        }
+        @keyframes reminderGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(163, 213, 255, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(163, 213, 255, 0.6); }
+        }
+        .has-reminder {
+            border-left: 4px solid var(--accent-1);
+            position: relative;
+        }
+        .has-reminder::after {
+            content: '❄';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        /* RECORDING INDICATOR */
+        .recording {
+            animation: recordingPulse 1s ease-in-out infinite;
+            background: var(--danger) !important;
+        }
+        @keyframes recordingPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        /* UTILITIES */
+        .hidden { 
+            display: none !important; 
+        }
+        .fade-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 1200px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            .aside {
+                order: -1;
+            }
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            .app-header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .notes-grid {
+                grid-template-columns: 1fr;
+            }
+            .app-title {
+                font-size: 2rem;
+            }
+            .main-layout {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+        /* NOTIFICATION STYLES */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 32px;
+            max-width: 350px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-strong);
+            z-index: 2000;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--border);
+            transform: translateX(400px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+        .notification.success {
+            background: rgba(163, 213, 255, 0.2);
+            border-color: var(--accent-1);
+            color: var(--accent-1);
+        }
+        .notification.error {
+            background: rgba(255, 82, 82, 0.2);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+        .notification.info {
+            background: var(--panel);
+            border-color: var(--border-hover);
+            color: var(--text);
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <!-- AUTH CONTAINER -->
+    <div id="authContainer">
+        <div class="auth-container">
+            <h1 class="app-title" style="text-align:center; margin-bottom: 30px; font-size: 2.5rem;">FROST NOTES</h1>
+            <div class="auth-tabs">
+                <button class="btn" id="loginTabBtn">❄️ ACCESS</button>
+                <button class="btn" id="signupTabBtn">⛄ REGISTER</button>
+            </div>
+            <form id="loginForm">
+                <div class="form-row">
+                    <label>📧 Email Address</label>
+                    <input type="email" id="loginEmail" required placeholder="your.email@frost.net" />
+                </div>
+                <div class="form-row">
+                    <label>🔑 Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Enter the winter realm..." />
+                </div>
+                <button type="submit" class="btn primary" style="width:100%;">❄️ ENTER FROST</button>
+            </form>
+            <form id="signupForm" class="hidden">
+                <div class="form-row">
+                    <label>📧 Email Address</label>
+                    <input type="email" id="signupEmail" required placeholder="your.email@frost.net" />
+                </div>
+                <div class="form-row">
+                    <label>🔑 Password</label>
+                    <input type="password" id="signupPassword" required placeholder="Choose your frozen path..." />
+                </div>
+                <button type="submit" class="btn primary" style="width:100%;">⛄ JOIN FROST</button>
+            </form>
+            <div id="authError"></div>
+        </div>
+    </div>
+    <!-- MAIN APP -->
+    <div id="appContainer" class="hidden">
+        <div class="container">
+            <header class="app-header">
+                <h1 class="app-title">FROST NOTES</h1>
+                <div class="user-info">
+                    <span class="user-email" id="userEmailDisplay"></span>
+                    <button class="btn danger" id="signOutBtn">🚪 DISCONNECT</button>
+                </div>
+            </header>
+            <main class="main-layout">
+                <aside class="aside">
+                    <section class="panel fade-in">
+                        <h2 id="formTitle">📝 NEW FROST ENTRY</h2>
+                        <form id="noteForm">
+                            <input type="hidden" id="editingId" />
+                            
+                            <div class="form-row">
+                                <label>🏷️ Title</label>
+                                <input id="noteTitle" type="text" placeholder="Enter frost title..." />
+                            </div>
+                            
+                            <div class="form-row">
+                                <label>📄 Content</label>
+                                <textarea id="noteContent" placeholder="Input your frozen thoughts..."></textarea>
+                            </div>
+                            <!-- DRAWING SECTION -->
+                            <div class="form-row">
+                                <label>🎨 Frost Canvas</label>
+                                <div class="canvas-controls">
+                                    <input type="color" class="color-picker" id="drawColor" value="#a3d5ff" title="Select color">
+                                    <input type="range" id="brushSize" min="1" max="20" value="3" title="Brush size" style="flex: 1; margin: 0 10px;">
+                                    <button type="button" class="btn" id="clearCanvas">🗑️ Clear</button>
+                                    <button type="button" class="btn" id="toggleDrawing">✏️ Draw</button>
+                                </div>
+                                <canvas class="drawing-canvas hidden" id="drawingCanvas" width="450" height="250"></canvas>
+                            </div>
+                            <!-- PHOTO SECTION -->
+                            <div class="form-row">
+                                <label>📷 Frozen Images</label>
+                                <input type="file" id="photoInput" accept="image/*" multiple style="display: none;">
+                                <button type="button" class="btn" id="addPhotoBtn">📸 Upload Images</button>
+                                <div class="media-attachments" id="photoAttachments"></div>
+                            </div>
+                            <!-- AUDIO SECTION -->
+                            <div class="form-row">
+                                <label>🎤 Frost Audio</label>
+                                <div class="audio-controls">
+                                    <button type="button" class="btn" id="recordBtn">🎙️ Record</button>
+                                    <button type="button" class="btn hidden" id="stopRecordBtn">⏹️ Stop</button>
+                                    <button type="button" class="btn hidden" id="playRecordBtn">▶️ Play</button>
+                                    <button type="button" class="btn hidden" id="deleteRecordBtn">🗑️ Delete</button>
+                                </div>
+                                <div id="audioAttachments"></div>
+                            </div>
+                            <!-- REMINDER SECTION -->
+                            <div class="form-row">
+                                <label>⏰ Frost Alert</label>
+                                <div class="reminder-section">
+                                    <input type="datetime-local" id="reminderTime" />
+                                    <button type="button" class="btn" id="setReminderBtn" style="margin-top: 10px;">❄️ Set Alert</button>
+                                    <div id="reminderDisplay" class="hidden"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <label>🏷️ Tags (Enter or comma to add)</label>
+                                <div class="tags-input">
+                                    <input id="tagInput" type="text" placeholder="frost, ice, winter..." />
+                                </div>
+                            </div>
+                            
+                            <div class="button-group">
+                                <button class="btn" type="button" id="clearBtn">🧹 Reset</button>
+                                <button class="btn primary" type="submit" id="saveBtn">💾 SAVE ENTRY</button>
+                            </div>
+                        </form>
+                    </section>
+                    
+                    <section class="panel filters fade-in">
+                        <h2>🔍 Frost Filters</h2>
+                        <div class="tag-cloud" id="tagCloud"></div>
+                    </section>
+                </aside>
+                <section class="notes-section">
+                    <div class="panel fade-in">
+                        <h2>📊 Frost Repository</h2>
+                        <div class="form-row">
+                            <input type="text" id="searchBar" placeholder="Search the frost..." />
+                        </div>
+                        <div class="notes-grid" id="notesGrid"></div>
+                    </div>
+                </section>
+            </main>
+        </div>
+        
+        <button class="theme-toggle" id="themeToggle">❄️</button>
+    </div>
+    <!-- GSAP LIBRARY -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script type="module">
+        // Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js";
+        // Firebase Config (keeping your original config)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCaC3Wp6Hj_ZJW4y-RV5_iEP1qkVBZeIas",
+            authDomain: "beautifulnotesapp.firebaseapp.com",
+            projectId: "beautifulnotesapp",
+            storageBucket: "beautifulnotesapp.appspot.com",
+            messagingSenderId: "1011158263551",
+            appId: "1:1011158263551:web:9f4adac52b8f8dfd674eca",
+            measurementId: "G-GHPB8RSF8T"
+        };
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        // --- STATE MANAGEMENT ---
+        let currentUser = null;
+        let allNotes = [];
+        let noteListenerUnsubscribe = null;
+        let editorTags = new Set();
+        let filterTags = new Set();
+        let isDrawing = false;
+        let isRecording = false;
+        let mediaRecorder = null;
+        let currentAudioBlob = null;
+        let drawingData = null;
+        let attachedPhotos = [];
+        // --- DOM ELEMENTS ---
+        const $ = (selector) => document.querySelector(selector);
+        const authContainer = $('#authContainer');
+        const appContainer = $('#appContainer');
+        const notesGrid = $('#notesGrid');
+        const noteForm = $('#noteForm');
+        const tagInput = $('#tagInput');
+        const searchBar = $('#searchBar');
+        const tagCloud = $('#tagCloud');
+        const drawingCanvas = $('#drawingCanvas');
+        const ctx = drawingCanvas.getContext('2d');
+        // --- GSAP ANIMATIONS ---
+        function initAnimations() {
+            gsap.from('.app-title', {
+                duration: 1.5,
+                scale: 0.5,
+                opacity: 0,
+                ease: "back.out(1.7)"
+            });
+            gsap.from('.panel', {
+                duration: 1,
+                y: 50,
+                opacity: 0,
+                stagger: 0.2,
+                ease: "power2.out"
+            });
+            // Continuous frost effect
+            gsap.to('.app-title', {
+                textShadow: "0 0 20px #a3d5ff, 0 0 40px #a3d5ff, 0 0 60px #a3d5ff",
+                duration: 2,
+                ease: "power2.inOut",
+                yoyo: true,
+                repeat: -1
+            });
+        }
+        // --- AUTHENTICATION ---
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                authContainer.classList.add('hidden');
+                appContainer.classList.remove('hidden');
+                $('#userEmailDisplay').textContent = user.email;
+                attachNoteListener();
+                initAnimations();
+                checkReminders();
+            } else {
+                authContainer.classList.remove('hidden');
+                appContainer.classList.add('hidden');
+                if (noteListenerUnsubscribe) noteListenerUnsubscribe();
+                allNotes = [];
+                renderNotes();
+            }
+        });
+        $('#loginForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            const email = $('#loginEmail').value;
+            const password = $('#loginPassword').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                $('#authError').textContent = '';
+                showNotification('❄️ Welcome to the frost realm...', 'success');
+            } catch (error) {
+                $('#authError').textContent = error.message;
+            }
+        });
+        $('#signupForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            const email = $('#signupEmail').value;
+            const password = $('#signupPassword').value;
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                $('#authError').textContent = '';
+                showNotification('⛄ You have entered the frost realm...', 'success');
+            } catch (error) {
+                $('#authError').textContent = error.message;
+            }
+        });
+        $('#signOutBtn').addEventListener('click', () => {
+            signOut(auth);
+            showNotification('🔌 Disconnected from the frost realm...', 'info');
+        });
+        // Auth Tabs
+        const switchAuthTab = (showLogin) => {
+            const loginForm = $('#loginForm');
+            const signupForm = $('#signupForm');
+            
+            if (showLogin) {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                $('#loginTabBtn').style.background = 'var(--accent-gradient)';
+                $('#loginTabBtn').style.color = '#0a1929';
+                $('#signupTabBtn').style.background = '';
+                $('#signupTabBtn').style.color = '';
+            } else {
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                $('#signupTabBtn').style.background = 'var(--accent-gradient)';
+                $('#signupTabBtn').style.color = '#0a1929';
+                $('#loginTabBtn').style.background = '';
+                $('#loginTabBtn').style.color = '';
+            }
+        };
+        
+        $('#loginTabBtn').addEventListener('click', () => switchAuthTab(true));
+        $('#signupTabBtn').addEventListener('click', () => switchAuthTab(false));
+        switchAuthTab(true);
+        // --- DRAWING FUNCTIONALITY ---
+        $('#toggleDrawing').addEventListener('click', () => {
+            const isHidden = drawingCanvas.classList.contains('hidden');
+            if (isHidden) {
+                drawingCanvas.classList.remove('hidden');
+                $('#toggleDrawing').textContent = '🙈 Hide Canvas';
+                gsap.from(drawingCanvas, {duration: 0.5, scaleY: 0, transformOrigin: "top"});
+            } else {
+                drawingCanvas.classList.add('hidden');
+                $('#toggleDrawing').textContent = '✏️ Draw';
+            }
+        });
+        $('#clearCanvas').addEventListener('click', () => {
+            ctx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+            drawingData = null;
+            gsap.from(drawingCanvas, {duration: 0.3, rotation: 2, yoyo: true, repeat: 1});
+        });
+        // Drawing events
+        let lastX = 0, lastY = 0;
+        drawingCanvas.addEventListener('mousedown', startDrawing);
+        drawingCanvas.addEventListener('mousemove', draw);
+        drawingCanvas.addEventListener('mouseup', stopDrawing);
+        drawingCanvas.addEventListener('mouseout', stopDrawing);
+        // Touch events for mobile
+        drawingCanvas.addEventListener('touchstart', handleTouch);
+        drawingCanvas.addEventListener('touchmove', handleTouch);
+        drawingCanvas.addEventListener('touchend', stopDrawing);
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent(
+                e.type === 'touchstart' ? 'mousedown' : 'mousemove',
+                {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                }
+            );
+            drawingCanvas.dispatchEvent(mouseEvent);
+        }
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = getMousePos(e);
+        }
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            const [currentX, currentY] = getMousePos(e);
+            
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.strokeStyle = $('#drawColor').value;
+            ctx.lineWidth = $('#brushSize').value;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(currentX, currentY);
+            ctx.stroke();
+            
+            [lastX, lastY] = [currentX, currentY];
+        }
+        function stopDrawing() {
+            if (!isDrawing) return;
+            isDrawing = false;
+            drawingData = drawingCanvas.toDataURL();
+        }
+        function getMousePos(e) {
+            const rect = drawingCanvas.getBoundingClientRect();
+            return [e.clientX - rect.left, e.clientY - rect.top];
+        }
+        // --- PHOTO FUNCTIONALITY ---
+        $('#addPhotoBtn').addEventListener('click', () => $('#photoInput').click());
+        $('#photoInput').addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            for (const file of files) {
+                if (file.size > 10 * 1024 * 1024) {
+                    showNotification('⚠️ File too large (max 10MB)', 'error');
+                    continue;
+                }
+                
+                const photoData = {
+                    file: file,
+                    preview: URL.createObjectURL(file),
+                    id: Date.now() + Math.random()
+                };
+                
+                attachedPhotos.push(photoData);
+                renderPhotoAttachments();
+            }
+        });
+        function renderPhotoAttachments() {
+            const container = $('#photoAttachments');
+            container.innerHTML = '';
+            
+            attachedPhotos.forEach(photo => {
+                const mediaItem = document.createElement('div');
+                mediaItem.className = 'media-item';
+                mediaItem.innerHTML = `
+                    <img src="${photo.preview}" alt="Uploaded image">
+                    <button class="media-remove" onclick="removePhoto('${photo.id}')">×</button>
+                `;
+                container.appendChild(mediaItem);
+                
+                gsap.from(mediaItem, {duration: 0.5, scale: 0, ease: "back.out(1.7)"});
+            });
+        }
+        window.removePhoto = (photoId) => {
+            attachedPhotos = attachedPhotos.filter(p => p.id !== photoId);
+            renderPhotoAttachments();
+        };
+        // --- AUDIO RECORDING ---
+        $('#recordBtn').addEventListener('click', startRecording);
+        $('#stopRecordBtn').addEventListener('click', stopRecording);
+        $('#playRecordBtn').addEventListener('click', playRecording);
+        $('#deleteRecordBtn').addEventListener('click', deleteRecording);
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                const chunks = [];
+                mediaRecorder.ondataavailable = e => chunks.push(e.data);
+                mediaRecorder.onstop = () => {
+                    currentAudioBlob = new Blob(chunks, { type: 'audio/wav' });
+                    stream.getTracks().forEach(track => track.stop());
+                };
+                mediaRecorder.start();
+                isRecording = true;
+                
+                $('#recordBtn').classList.add('hidden', 'recording');
+                $('#stopRecordBtn').classList.remove('hidden');
+                
+                showNotification('🎙️ Recording frost audio...', 'info');
+            } catch (error) {
+                showNotification('❌ Could not access microphone', 'error');
+            }
+        }
+        function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                
+                $('#recordBtn').classList.remove('hidden', 'recording');
+                $('#stopRecordBtn').classList.add('hidden');
+                $('#playRecordBtn').classList.remove('hidden');
+                $('#deleteRecordBtn').classList.remove('hidden');
+                
+                showNotification('✅ Frost audio captured', 'success');
+            }
+        }
+        function playRecording() {
+            if (currentAudioBlob) {
+                const audio = new Audio(URL.createObjectURL(currentAudioBlob));
+                audio.play();
+                showNotification('▶️ Playing frost audio...', 'info');
+            }
+        }
+        function deleteRecording() {
+            currentAudioBlob = null;
+            $('#playRecordBtn').classList.add('hidden');
+            $('#deleteRecordBtn').classList.add('hidden');
+            showNotification('🗑️ Frost audio deleted', 'info');
+        }
+        // --- REMINDERS ---
+        $('#setReminderBtn').addEventListener('click', () => {
+            const reminderTime = $('#reminderTime').value;
+            if (reminderTime) {
+                const date = new Date(reminderTime);
+                const now = new Date();
+                
+                if (date > now) {
+                    $('#reminderDisplay').innerHTML = `
+                        <div class="reminder-active" style="margin-top: 10px; padding: 10px; border-radius: 8px;">
+                            ❄️ Frost alert: ${date.toLocaleString()}
+                            <button class="btn" onclick="clearReminder()" style="margin-left: 10px; padding: 4px 8px; font-size: 0.8rem;">🗑️ Cancel</button>
+                        </div>
+                    `;
+                    $('#reminderDisplay').classList.remove('hidden');
+                    showNotification('❄️ Frost alert scheduled', 'success');
+                } else {
+                    showNotification('⚠️ Cannot set alert in the past', 'error');
+                }
+            }
+        });
+        window.clearReminder = () => {
+            $('#reminderTime').value = '';
+            $('#reminderDisplay').classList.add('hidden');
+            showNotification('❌ Frost alert cancelled', 'info');
+        };
+        function checkReminders() {
+            setInterval(() => {
+                const reminderTime = $('#reminderTime').value;
+                if (reminderTime) {
+                    const reminderDate = new Date(reminderTime);
+                    const now = new Date();
+                    
+                    if (now >= reminderDate) {
+                        showNotification('🚨 FROST ALERT: Your scheduled reminder!', 'info', 5000);
+                        clearReminder();
+                    }
+                }
+            }, 60000);
+        }
+        // --- FIRESTORE OPERATIONS ---
+        function attachNoteListener() {
+            if (noteListenerUnsubscribe) noteListenerUnsubscribe();
+            if (!currentUser) return;
+            const notesQuery = query(
+                collection(db, 'notes'), 
+                where("userId", "==", currentUser.uid), 
+                orderBy("createdAt", "desc")
+            );
+            
+            noteListenerUnsubscribe = onSnapshot(notesQuery, (snapshot) => {
+                allNotes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderNotes();
+                renderTagCloud();
+            });
+        }
+        // --- NOTE FORM SUBMISSION ---
+        noteForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const title = $('#noteTitle').value.trim();
+            const content = $('#noteContent').value.trim();
+            const editingId = $('#editingId').value;
+            const reminderTime = $('#reminderTime').value;
+            
+            if (!title && !content && !drawingData && attachedPhotos.length === 0 && !currentAudioBlob) {
+                showNotification('❌ Cannot save empty frost entry', 'error');
+                return;
+            }
+            showNotification('❄️ Processing frost upload...', 'info');
+            try {
+                let photoUrls = [];
+                let audioUrl = null;
+                
+                // Upload photos
+                for (const photo of attachedPhotos) {
+                    const photoRef = ref(storage, `photos/${currentUser.uid}/${Date.now()}_${photo.file.name}`);
+                    const snapshot = await uploadBytes(photoRef, photo.file);
+                    const url = await getDownloadURL(snapshot.ref);
+                    photoUrls.push(url);
+                }
+                
+                // Upload audio
+                if (currentAudioBlob) {
+                    const audioRef = ref(storage, `audio/${currentUser.uid}/${Date.now()}.wav`);
+                    const snapshot = await uploadBytes(audioRef, currentAudioBlob);
+                    audioUrl = await getDownloadURL(snapshot.ref);
+                }
+                const noteData = {
+                    title: title || 'Untitled Frost Entry',
+                    content,
+                    tags: [...editorTags],
+                    userId: currentUser.uid,
+                    createdAt: serverTimestamp(),
+                    drawingData,
+                    photoUrls,
+                    audioUrl,
+                    reminderTime: reminderTime || null
+                };
+                if (editingId) {
+                    await updateDoc(doc(db, "notes", editingId), {
+                        title: noteData.title,
+                        content: noteData.content,
+                        tags: noteData.tags,
+                        drawingData: noteData.drawingData,
+                        photoUrls: noteData.photoUrls,
+                        audioUrl: noteData.audioUrl,
+                        reminderTime: noteData.reminderTime
+                    });
+                    showNotification('✅ Frost entry updated', 'success');
+                } else {
+                    await addDoc(collection(db, "notes"), noteData);
+                    showNotification('💾 Frost entry saved', 'success');
+                }
+                clearForm();
+            } catch (error) {
+                console.error("Error saving note:", error);
+                showNotification('❌ Upload failed - connection error', 'error');
+            }
+        });
+        // --- NOTE RENDERING ---
+        function renderNotes() {
+            const searchTerm = searchBar.value.toLowerCase();
+            const filteredNotes = allNotes.filter(note => {
+                const searchMatch = (
+                    note.title.toLowerCase().includes(searchTerm) ||
+                    note.content.toLowerCase().includes(searchTerm) ||
+                    (note.tags || []).some(tag => tag.toLowerCase().includes(searchTerm))
+                );
+                const tagMatch = filterTags.size === 0 || 
+                    (note.tags && [...filterTags].every(ft => note.tags.includes(ft)));
+                
+                return searchMatch && tagMatch;
+            });
+            notesGrid.innerHTML = '';
+            
+            if (filteredNotes.length === 0) {
+                notesGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px; color: var(--muted);">
+                        <div style="font-size: 4rem; margin-bottom: 20px;">❄️</div>
+                        <p style="font-family: 'Orbitron', monospace; font-size: 1.2rem;">No frost data found...</p>
+                        <p style="font-family: 'Space Mono', monospace; font-size: 0.9rem; margin-top: 10px;">Create your first frost entry</p>
+                    </div>
+                `;
+                return;
+            }
+            filteredNotes.forEach((note, index) => {
+                const card = document.createElement('div');
+                card.className = 'note-card';
+                if (note.reminderTime) card.classList.add('has-reminder');
+                
+                const date = note.createdAt?.toDate().toLocaleDateString() || 'Unknown Date';
+                
+                let mediaContent = '';
+                
+                // Add drawing
+                if (note.drawingData) {
+                    mediaContent += `
+                        <div style="margin: 15px 0;">
+                            <img src="${note.drawingData}" style="max-width: 100%; height: auto; border-radius: 8px; border: 2px solid var(--border);" alt="Frost sketch">
+                        </div>
+                    `;
+                }
+                
+                // Add photos - FIXED: Better image handling
+                if (note.photoUrls && note.photoUrls.length > 0) {
+                    mediaContent += '<div class="media-attachments" style="margin: 15px 0;">';
+                    note.photoUrls.forEach(url => {
+                        mediaContent += `
+                            <div class="media-item">
+                                <img src="${url}" alt="Frost image" style="width: 100%; height: 150px; object-fit: cover;">
+                            </div>
+                        `;
+                    });
+                    mediaContent += '</div>';
+                }
+                
+                // Add audio
+                if (note.audioUrl) {
+                    mediaContent += `
+                        <div style="margin: 15px 0; padding: 10px; background: var(--glass); border-radius: 8px; border: 1px solid var(--border);">
+                            <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 8px; font-family: 'Space Mono', monospace;">🎤 Frost Audio:</div>
+                            <audio controls style="width: 100%;">
+                                <source src="${note.audioUrl}" type="audio/wav">
+                                Your browser does not support audio playback.
+                            </audio>
+                        </div>
+                    `;
+                }
+                
+                // Add reminder
+                let reminderContent = '';
+                if (note.reminderTime) {
+                    const reminderDate = new Date(note.reminderTime);
+                    reminderContent = `
+                        <div style="background: rgba(163, 213, 255, 0.1); padding: 12px; border-radius: 8px; margin: 15px 0; border: 1px solid var(--accent-1);">
+                            ❄️ Frost Alert: ${reminderDate.toLocaleString()}
+                        </div>
+                    `;
+                }
+                
+                card.innerHTML = `
+                    <div>
+                        <h3 class="note-title">${escapeHTML(note.title)}</h3>
+                        <div class="note-content">${escapeHTML(note.content)}</div>
+                        ${mediaContent}
+                        ${reminderContent}
+                    </div>
+                    <div class="note-tags">
+                        ${(note.tags || []).map(tag => `<span class="tag-chip">${escapeHTML(tag)}</span>`).join('')}
+                    </div>
+                    <div class="note-footer">
+                        <span class="note-date">${date}</span>
+                        <div class="note-actions">
+                            <button class="btn" data-action="edit" data-id="${note.id}">📝 Edit</button>
+                            <button class="btn danger" data-action="delete" data-id="${note.id}">🗑️ Delete</button>
+                        </div>
+                    </div>
+                `;
+                
+                notesGrid.appendChild(card);
+                
+                // Animate card entrance
+                gsap.from(card, {
+                    duration: 0.6,
+                    y: 50,
+                    opacity: 0,
+                    delay: index * 0.1,
+                    ease: "power2.out"
+                });
+            });
+        }
+        // --- NOTE ACTIONS ---
+        notesGrid.addEventListener('click', async (e) => {
+            const action = e.target.dataset.action;
+            const id = e.target.dataset.id;
+            if (!action || !id) return;
+            if (action === 'delete') {
+                if (confirm('⚠️ Delete this frost entry permanently?')) {
+                    try {
+                        await deleteDoc(doc(db, "notes", id));
+                        showNotification('🗑️ Frost entry deleted', 'success');
+                    } catch (error) {
+                        showNotification('❌ Delete failed', 'error');
+                    }
+                }
+            } else if (action === 'edit') {
+                const noteToEdit = allNotes.find(n => n.id === id);
+                if (noteToEdit) {
+                    $('#editingId').value = noteToEdit.id;
+                    $('#noteTitle').value = noteToEdit.title;
+                    $('#noteContent').value = noteToEdit.content;
+                    $('#reminderTime').value = noteToEdit.reminderTime || '';
+                    
+                    editorTags = new Set(noteToEdit.tags || []);
+                    renderEditorTags();
+                    
+                    // Load drawing if exists
+                    if (noteToEdit.drawingData) {
+                        const img = new Image();
+                        img.onload = () => {
+                            ctx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+                            ctx.drawImage(img, 0, 0);
+                            drawingData = noteToEdit.drawingData;
+                        };
+                        img.src = noteToEdit.drawingData;
+                        drawingCanvas.classList.remove('hidden');
+                        $('#toggleDrawing').textContent = '🙈 Hide Canvas';
+                    }
+                    
+                    $('#formTitle').textContent = '📝 Edit Frost Entry';
+                    $('#saveBtn').textContent = '💾 Update Entry';
+                    
+                    // Smooth scroll to top
+                    gsap.to(window, {duration: 1, scrollTo: 0, ease: "power2.inOut"});
+                    
+                    showNotification('📊 Loading frost entry...', 'info');
+                }
+            }
+        });
+        // --- TAGS FUNCTIONALITY ---
+        tagInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ',') {
+                e.preventDefault();
+                const tag = tagInput.value.trim().toLowerCase();
+                if (tag) {
+                    editorTags.add(tag);
+                    tagInput.value = '';
+                    renderEditorTags();
+                    
+                    // Animate tag addition
+                    setTimeout(() => {
+                        const newTag = document.querySelector(`[data-tag="${tag}"]`);
+                        if (newTag) {
+                            gsap.from(newTag, {duration: 0.5, scale: 0, ease: "back.out(1.7)"});
+                        }
+                    }, 50);
+                }
+            }
+        });
+        function renderEditorTags() {
+            const container = tagInput.parentElement;
+            container.querySelectorAll('.tag-chip').forEach(c => c.remove());
+            
+            editorTags.forEach(tag => {
+                const chip = document.createElement('span');
+                chip.className = 'tag-chip';
+                chip.setAttribute('data-tag', tag);
+                chip.innerHTML = `${escapeHTML(tag)} <span class="remove-tag" data-tag="${escapeHTML(tag)}">×</span>`;
+                container.insertBefore(chip, tagInput);
+            });
+        }
+        tagInput.parentElement.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-tag')) {
+                const tag = e.target.dataset.tag;
+                const chip = e.target.parentElement;
+                
+                gsap.to(chip, {
+                    duration: 0.3,
+                    scale: 0,
+                    opacity: 0,
+                    onComplete: () => {
+                        editorTags.delete(tag);
+                        renderEditorTags();
+                    }
+                });
+            }
+        });
+        function renderTagCloud() {
+            const allTags = new Set(allNotes.flatMap(note => note.tags || []));
+            tagCloud.innerHTML = '';
+            
+            if (allTags.size === 0) {
+                tagCloud.innerHTML = '<p style="color: var(--muted); font-size: 0.9rem; text-align: center;">❄️ No frost tags yet...</p>';
+                return;
+            }
+            
+            allTags.forEach((tag, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'tag-cloud-btn';
+                btn.textContent = tag;
+                btn.dataset.tag = tag;
+                if (filterTags.has(tag)) btn.classList.add('active');
+                tagCloud.appendChild(btn);
+                
+                gsap.from(btn, {
+                    duration: 0.5,
+                    scale: 0,
+                    delay: index * 0.05,
+                    ease: "back.out(1.7)"
+                });
+            });
+        }
+        
+        tagCloud.addEventListener('click', (e) => {
+            if (e.target.classList.contains('tag-cloud-btn')) {
+                const tag = e.target.dataset.tag;
+                const wasActive = filterTags.has(tag);
+                
+                if (wasActive) {
+                    filterTags.delete(tag);
+                    e.target.classList.remove('active');
+                } else {
+                    filterTags.add(tag);
+                    e.target.classList.add('active');
+                }
+                
+                // Animate button
+                gsap.to(e.target, {
+                    duration: 0.2,
+                    scale: 0.9,
+                    yoyo: true,
+                    repeat: 1,
+                    ease: "power2.inOut"
+                });
+                
+                renderNotes();
+            }
+        });
+        // --- UTILITY FUNCTIONS ---
+        $('#clearBtn').addEventListener('click', () => {
+            if (confirm('⚠️ Clear all frost data?')) {
+                clearForm();
+                showNotification('🧹 Form reset complete', 'info');
+            }
+        });
+        
+        searchBar.addEventListener('input', renderNotes);
+        function clearForm() {
+            noteForm.reset();
+            $('#editingId').value = '';
+            $('#reminderTime').value = '';
+            editorTags.clear();
+            renderEditorTags();
+            
+            // Clear media
+            ctx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+            drawingData = null;
+            drawingCanvas.classList.add('hidden');
+            $('#toggleDrawing').textContent = '✏️ Draw';
+            
+            attachedPhotos = [];
+            renderPhotoAttachments();
+            
+            currentAudioBlob = null;
+            $('#playRecordBtn').classList.add('hidden');
+            $('#deleteRecordBtn').classList.add('hidden');
+            
+            clearReminder();
+            
+            $('#formTitle').textContent = '📝 New Frost Entry';
+            $('#saveBtn').textContent = '💾 Save Entry';
+            
+            // Animate form clearing
+            gsap.from(noteForm, {duration: 0.5, scale: 0.98, ease: "power2.out"});
+        }
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+        // --- NOTIFICATION SYSTEM ---
+        function showNotification(message, type = 'info', duration = 3000) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            const bgColors = {
+                'success': 'rgba(163, 213, 255, 0.2)',
+                'error': 'rgba(255, 82, 82, 0.2)',
+                'info': 'var(--panel)'
+            };
+            
+            const borderColors = {
+                'success': 'var(--accent-1)',
+                'error': 'var(--danger)',
+                'info': 'var(--border-hover)'
+            };
+            
+            const textColors = {
+                'success': 'var(--accent-1)',
+                'error': 'var(--danger)',
+                'info': 'var(--text)'
+            };
+            
+            notification.style.background = bgColors[type];
+            notification.style.borderColor = borderColors[type];
+            notification.style.color = textColors[type];
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => notification.classList.add('show'), 100);
+            
+            // Remove after duration
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 400);
+            }, duration);
+        }
+        // --- THEME TOGGLE ---
+        $('#themeToggle').addEventListener('click', () => {
+            const currentTheme = document.body.dataset.theme;
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.dataset.theme = newTheme;
+            
+            const themeToggle = $('#themeToggle');
+            themeToggle.textContent = newTheme === 'dark' ? '❄️' : '☀️';
+            
+            // Theme transition animation
+            gsap.to(document.body, {
+                duration: 0.8,
+                ease: "power2.inOut"
+            });
+            
+            // Rotate theme toggle
+            gsap.to(themeToggle, {
+                duration: 0.6,
+                rotation: 360,
+                ease: "back.out(1.7)"
+            });
+            
+            showNotification(
+                newTheme === 'dark' ? '❄️ Winter mode activated' : '☀️ Spring mode activated', 
+                'info'
+            );
+        });
+        // --- KEYBOARD SHORTCUTS ---
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'n':
+                        e.preventDefault();
+                        clearForm();
+                        $('#noteTitle').focus();
+                        showNotification('📝 New frost entry ready...', 'info');
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        if (!$('#saveBtn').disabled) $('#saveBtn').click();
+                        break;
+                    case 'f':
+                        e.preventDefault();
+                        searchBar.focus();
+                        showNotification('🔍 Frost search activated...', 'info');
+                        break;
+                }
+            }
+            
+            if (e.key === 'Escape') {
+                clearForm();
+                showNotification('🚪 Form cleared', 'info');
+            }
+        });
+        // --- WORD COUNT ---
+        function updateWordCount() {
+            const content = $('#noteContent').value;
+            const wordCount = content.trim() ? content.trim().split(/\s+/).length : 0;
+            const charCount = content.length;
+            
+            let countDisplay = document.querySelector('.word-count');
+            if (!countDisplay) {
+                countDisplay = document.createElement('div');
+                countDisplay.className = 'word-count';
+                countDisplay.style.cssText = `
+                    font-size: 0.8rem;
+                    color: var(--muted);
+                    margin-top: 8px;
+                    font-family: 'Space Mono', monospace;
+                    text-align: right;
+                `;
+                $('#noteContent').parentNode.appendChild(countDisplay);
+            }
+            
+            countDisplay.textContent = `📊 ${wordCount} words | ${charCount} characters`;
+        }
+        $('#noteContent').addEventListener('input', updateWordCount);
+        // --- BRUSH SIZE DISPLAY ---
+        $('#brushSize').addEventListener('input', (e) => {
+            const size = e.target.value;
+            showNotification(`🖌️ Brush size: ${size}px`, 'info', 1000);
+        });
+        // --- ENHANCED SEARCH ---
+        let searchTimeout;
+        searchBar.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            const searchTerm = e.target.value;
+            
+            // Animate search bar
+            if (searchTerm) {
+                gsap.to(searchBar, {
+                    duration: 0.2,
+                    borderColor: 'var(--accent-1)',
+                    boxShadow: '0 0 0 4px rgba(163, 213, 255, 0.2)'
+                });
+            } else {
+                gsap.to(searchBar, {
+                    duration: 0.2,
+                    borderColor: 'var(--border)',
+                    boxShadow: 'none'
+                });
+            }
+            
+            searchTimeout = setTimeout(() => {
+                renderNotes();
+                
+                if (searchTerm.length > 2) {
+                    const matchCount = allNotes.filter(note => 
+                        note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        note.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        (note.tags || []).some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+                    ).length;
+                    
+                    showNotification(`🔍 Found ${matchCount} frost entries`, 'info', 2000);
+                }
+            }, 300);
+        });
+        // --- INITIALIZE EVERYTHING ---
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('❄️ Frost Notes System Initialized');
+            console.log('🔧 Features: Drawing, Audio, Photos, Reminders, Themes');
+            console.log('🎮 Keyboard shortcuts: Ctrl+N (new), Ctrl+S (save), Ctrl+F (search), Esc (clear)');
+            
+            // Welcome message
+            setTimeout(() => {
+                if (!currentUser) {
+                    showNotification('🔌 Ready to enter the frost realm...', 'info', 4000);
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
